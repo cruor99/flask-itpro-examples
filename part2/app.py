@@ -16,6 +16,10 @@ app.config['OAUTH_CREDENTIALS'] = {
     'twitter': {
         'id': '<app id her>',
         'secret': '<app secret her>'
+        },
+    'google': {
+        'id': '<app id som ender i .apps.googleusercontent.com her>',
+        'secret': '<app secret her'
         }
     }
 
