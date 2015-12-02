@@ -10,12 +10,12 @@ app.config['SECRET_KEY'] = 'superhemmelig!'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///db.sqlite'
 app.config['OAUTH_CREDENTIALS'] = {
     'facebook': {
-        'id': '<Sett inn ID her>',
-        'secret': '<Sett inn secret her>'
+        'id': '<app id her>',
+        'secret': '<app secret her>'
         },
     'twitter': {
-        'id': '<Sett inn ID her>',
-        'secret': 'Sett inn secret her>'
+        'id': '<app id her>',
+        'secret': '<app secret her>'
         }
     }
 

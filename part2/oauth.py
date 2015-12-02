@@ -25,7 +25,7 @@ class OAuthSignIn(object):
     def get_provider(self, provider_name):
         if self.providers is None:
             self.providers = {}
-            for provider_class in self.__subclasses():
+            for provider_class in self.__subclasses__():
                 provider = provider_class()
                 self.providers[provider.provider_name] = provider
         return self.providers[provider_name]
@@ -59,11 +59,14 @@ class FacebookSignIn(OAuthSignIn):
                   'grant_type': 'authorization_code',
                   'redirect_uri': self.get_callback_url()}
             )
-        me = oauth_session.get('me?field=id,email').json()
+        me = oauth_session.get('me?field=name,id').json()
+        print me
         return(
             'facebook$' + me['id'],
-            me.get('email').split('@')[0],
-            me.get('email')
+            me.get('name'),
+            # Det har blitt en endring her siden sist jeg brukte
+            # facebook login, used to return email men kun name at the moment
+            me.get('name')
             )
 
 
@@ -76,7 +79,7 @@ class TwitterSignIn(OAuthSignIn):
             consumer_key=self.consumer_id,
             consumer_secret=self.consumer_secret,
             request_token_url='https://api.twitter.com/oauth/request_token',
-            authorize_url='https://api.twitter.com/oauth/authorize',
+            authorize_url='https://api.twitter.com/oauth/authenticate',
             access_token_url='https://api.twitter.com/oauth/access_token',
             base_url='https://api.twitter.com/1.1'
             )
@@ -92,12 +95,13 @@ class TwitterSignIn(OAuthSignIn):
         request_token = session.pop('request_token')
         if 'oauth_verifier' not in request.args:
             return None, None, None
-        oauth_session = self.service.get_oauth_session(
+        oauth_session = self.service.get_auth_session(
             request_token[0],
             request_token[1],
             data={'oauth_verifier': request.args['oauth_verifier']}
             )
-        me = oauth_session.get('account/verify_credentials.json').json()
+        # usikker paa hvorfor ikke base_url blir brukt her
+        me = oauth_session.get('https://api.twitter.com/1.1/account/verify_credentials.json').json()
         social_id = 'twitter$' + str(me.get('id'))
         username = me.get('screen_name')
         return social_id, username, None
